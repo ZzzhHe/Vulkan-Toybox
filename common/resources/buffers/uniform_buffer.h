@@ -29,8 +29,8 @@ namespace vkcommon {
         VkBuffer buffer(uint32_t frame) const { return m_buffers[frame].handle(); }
         VkDeviceSize size() const { return m_bufferSize; }
 
-    protected:
-        // Helper method for derived classes to update data
+        //protected:
+            // Helper method for derived classes to update data
         void updateData(uint32_t currentFrame, const void* data, VkDeviceSize size);
 
     private:
