@@ -14,7 +14,7 @@ find_package(glm CONFIG REQUIRED)
 # 3rd party headers (STB, etc)
 add_library(3rd_party INTERFACE)
 target_include_directories(3rd_party INTERFACE 
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rd
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rd_party
 )
 
 # Modern compiler warnings
