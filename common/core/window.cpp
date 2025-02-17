@@ -9,7 +9,7 @@ namespace vkcommon
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-        m_window = glfwCreateWindow(kWidth, kHeight, "Vulkan", nullptr, nullptr);
+        m_window = glfwCreateWindow(kWidth, kHeight, "Vulkan-ToyBox", nullptr, nullptr);
         glfwSetWindowUserPointer(m_window, this);
         glfwSetFramebufferSizeCallback(m_window, framebufferResizeCallback);
     }
