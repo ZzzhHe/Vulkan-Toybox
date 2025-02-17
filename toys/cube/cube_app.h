@@ -19,6 +19,7 @@
 #include "resources/images/color_image.h"
 #include "resources/images/depth_buffer.h"
 #include "resources/memory/memory_allocator.h"
+#include "resources/images/texture.h"
 #include "sync/frame_manager.h"
 
 #define GLM_FORCE_RADIANS
@@ -76,6 +77,7 @@ private:
     vkcommon::ColorImage m_colorImage{ m_device, m_allocator };
     vkcommon::DepthBuffer m_depthBuffer{ m_device, m_allocator };
     vkcommon::UniformBuffer m_uniformBuffer{ m_device, m_allocator };
+    vkcommon::Texture m_texture{ m_device, m_allocator };
 
     vkcommon::FrameManager m_frameManager{ m_device, MAX_FRAMES_IN_FLIGHT };
 };

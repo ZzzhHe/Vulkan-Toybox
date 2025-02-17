@@ -7,11 +7,16 @@ void CubeApp::run() {
 
 void CubeApp::initVulkan() {
     m_descriptorSetLayout.addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT);
+    m_descriptorSetLayout.addBinding(1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT);
     m_descriptorSetLayout.create();
+
+    m_texture.loadFromFile("D:\\Projects\\Vulkan-Toybox\\toys\\cube\\dice_texture.png", m_commandPool);
+    m_texture.createSampler();
 
     m_uniformBuffer.create(sizeof(UniformBufferObject), MAX_FRAMES_IN_FLIGHT);
 
     m_descriptorPool.addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, MAX_FRAMES_IN_FLIGHT);
+    m_descriptorPool.addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, MAX_FRAMES_IN_FLIGHT);
     m_descriptorPool.create(MAX_FRAMES_IN_FLIGHT);
 
     m_descriptorSets = m_descriptorPool.allocate(m_descriptorSetLayout.handle(), MAX_FRAMES_IN_FLIGHT);
@@ -23,6 +28,12 @@ void CubeApp::initVulkan() {
             VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
             m_uniformBuffer.buffer(i),
             sizeof(UniformBufferObject)
+        );
+        descriptorWriter.writeImage(
+            1,
+            VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+            m_texture.imageView(),
+            m_texture.sampler()
         );
         descriptorWriter.update(m_device);
     }
@@ -53,40 +64,59 @@ void CubeApp::createVertexBuffer() {
     // Define cube vertices (8 corners)
     const float size = 0.5f;  // Half-size of the cube
     std::vector<vkcommon::Vertex> vertices = {
-        // Front face
-        {{-size, -size, size}, {0, 0, 1}, {0, 0}},  // Front bottom-left
-        {{size, -size, size}, {0, 0, 1}, {1, 0}},   // Front bottom-right
-        {{size, size, size}, {0, 0, 1}, {1, 1}},    // Front top-right
-        {{-size, size, size}, {0, 0, 1}, {0, 1}},   // Front top-left
+        // Front face (2)
+        {{-size, -size,  size}, {0.0f, 0.0f, 1.0f}, {0.25f, 0.5f}},    // Bottom-left
+        {{ size, -size,  size}, {0.0f, 0.0f, 1.0f}, {0.5f, 0.5f}},     // Bottom-right
+        {{ size,  size,  size}, {0.0f, 0.0f, 1.0f}, {0.5f, 0.75f}},    // Top-right
+        {{-size,  size,  size}, {0.0f, 0.0f, 1.0f}, {0.25f, 0.75f}},   // Top-left
 
-        // Back face
-        {{-size, -size, -size}, {0, 0, -1}, {1, 0}}, // Back bottom-left
-        {{size, -size, -size}, {0, 0, -1}, {0, 0}},  // Back bottom-right
-        {{size, size, -size}, {0, 0, -1}, {0, 1}},   // Back top-right
-        {{-size, size, -size}, {0, 0, -1}, {1, 1}},  // Back top-left
+        // Back face (1)
+        {{-size, -size, -size}, {0.0f, 0.0f, -1.0f}, {0.5f, 0.5f}},    // Bottom-left
+        {{ size, -size, -size}, {0.0f, 0.0f, -1.0f}, {0.75f, 0.5f}},   // Bottom-right
+        {{ size,  size, -size}, {0.0f, 0.0f, -1.0f}, {0.75f, 0.75f}},  // Top-right
+        {{-size,  size, -size}, {0.0f, 0.0f, -1.0f}, {0.5f, 0.75f}},   // Top-left
+
+        // Top face (6)
+        {{-size,  size, -size}, {0.0f, 1.0f, 0.0f}, {0.5f, 0.25f}},    // Back-left
+        {{ size,  size, -size}, {0.0f, 1.0f, 0.0f}, {0.75f, 0.25f}},   // Back-right
+        {{ size,  size,  size}, {0.0f, 1.0f, 0.0f}, {0.75f, 0.5f}},    // Front-right
+        {{-size,  size,  size}, {0.0f, 1.0f, 0.0f}, {0.5f, 0.5f}},     // Front-left
+
+        // Bottom face (5)
+        {{-size, -size, -size}, {0.0f, -1.0f, 0.0f}, {0.5f, 0.75f}},   // Back-left
+        {{ size, -size, -size}, {0.0f, -1.0f, 0.0f}, {0.75f, 0.75f}},  // Back-right
+        {{ size, -size,  size}, {0.0f, -1.0f, 0.0f}, {0.75f, 1.0f}},   // Front-right
+        {{-size, -size,  size}, {0.0f, -1.0f, 0.0f}, {0.5f, 1.0f}},    // Front-left
+
+        // Right face (4)
+        {{ size, -size, -size}, {1.0f, 0.0f, 0.0f}, {0.75f, 0.5f}},    // Bottom-back
+        {{ size,  size, -size}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.5f}},     // Top-back
+        {{ size,  size,  size}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.75f}},    // Top-front
+        {{ size, -size,  size}, {1.0f, 0.0f, 0.0f}, {0.75f, 0.75f}},   // Bottom-front
+
+        // Left face (3)
+        {{-size, -size, -size}, {-1.0f, 0.0f, 0.0f}, {0.0f, 0.5f}},    // Bottom-back
+        {{-size,  size, -size}, {-1.0f, 0.0f, 0.0f}, {0.25f, 0.5f}},   // Top-back
+        {{-size,  size,  size}, {-1.0f, 0.0f, 0.0f}, {0.25f, 0.75f}},  // Top-front
+        {{-size, -size,  size}, {-1.0f, 0.0f, 0.0f}, {0.0f, 0.75f}}    // Bottom-front
     };
 
-    // Define indices for all faces
+    // Indices remain the same as before
     std::vector<uint32_t> indices = {
         // Front face
-        0, 1, 2,
-        2, 3, 0,
-        // Right face
-        1, 5, 6,
-        6, 2, 1,
+        0,  1,  2,  2,  3,  0,
         // Back face
-        5, 4, 7,
-        7, 6, 5,
-        // Left face
-        4, 0, 3,
-        3, 7, 4,
+        4,  5,  6,  6,  7,  4,
         // Top face
-        3, 2, 6,
-        6, 7, 3,
+        8,  9,  10, 10, 11, 8,
         // Bottom face
-        4, 5, 1,
-        1, 0, 4
+        12, 13, 14, 14, 15, 12,
+        // Right face
+        16, 17, 18, 18, 19, 16,
+        // Left face
+        20, 21, 22, 22, 23, 20
     };
+
 
     m_vertexBuffer.createVertexBuffer(vertices, m_commandPool);
     m_vertexBuffer.createIndexBuffer(indices, m_commandPool);
