@@ -1,9 +1,9 @@
-#include "cube_exploder.h"
+#include "cube_app.h"
 
 #include <iostream>
 
 int main() {
-    CubeExploder app;
+    CubeApp app;
 
     try {
         app.run();

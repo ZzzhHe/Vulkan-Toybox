@@ -1,5 +1,5 @@
-#ifndef CUBE_EXPLODER_H
-#define CUBE_EXPLODER_H
+#ifndef CUBE_APP_H
+#define CUBE_APP_H
 
 #include <vulkan/vulkan_core.h>
 
@@ -28,10 +28,10 @@
 #include <memory>
 #include <vector>
 
-class CubeExploder {
+class CubeApp {
 public:
-    CubeExploder() = default;
-    ~CubeExploder() = default;
+    CubeApp() = default;
+    ~CubeApp() = default;
 
     void run();
 
@@ -80,4 +80,4 @@ private:
     vkcommon::FrameManager m_frameManager{ m_device, MAX_FRAMES_IN_FLIGHT };
 };
 
-#endif // CUBE_EXPLODER_H
+#endif // CUBE_APP_H

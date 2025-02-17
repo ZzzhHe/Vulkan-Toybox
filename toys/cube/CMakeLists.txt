@@ -1,7 +1,7 @@
-add_vulkan_toy(exploder
+add_vulkan_toy(cube
     main.cpp
-    cube_exploder.cpp
-    cube_exploder.h
+    cube_app.cpp
+    cube_app.h
 )
 
 # Compile shaders
@@ -26,7 +26,7 @@ if(Vulkan_GLSLANG_VALIDATOR_EXECUTABLE)
     )
 
     # Add shader files as dependencies
-    target_sources(exploder PRIVATE
+    target_sources(cube PRIVATE
         ${CMAKE_CURRENT_BINARY_DIR}/cube.vert.spv
         ${CMAKE_CURRENT_BINARY_DIR}/cube.frag.spv
     )
@@ -35,10 +35,10 @@ else()
 endif()
 
 # Copy shaders to build directory
-add_custom_command(TARGET exploder POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:exploder>/shaders/
+add_custom_command(TARGET cube POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:cube>/shaders/
     COMMAND ${CMAKE_COMMAND} -E copy
         ${CMAKE_CURRENT_BINARY_DIR}/cube.vert.spv
         ${CMAKE_CURRENT_BINARY_DIR}/cube.frag.spv
-        $<TARGET_FILE_DIR:exploder>/shaders/
+        $<TARGET_FILE_DIR:cube>/shaders/
 )

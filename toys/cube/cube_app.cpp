@@ -1,11 +1,11 @@
-#include "cube_exploder.h"
+#include "cube_app.h"
 
-void CubeExploder::run() {
+void CubeApp::run() {
     initVulkan();
     mainLoop();
 }
 
-void CubeExploder::initVulkan() {
+void CubeApp::initVulkan() {
     m_descriptorSetLayout.addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT);
     m_descriptorSetLayout.create();
 
@@ -49,7 +49,7 @@ void CubeExploder::initVulkan() {
     createCommandBuffers();
 }
 
-void CubeExploder::createVertexBuffer() {
+void CubeApp::createVertexBuffer() {
     // Define cube vertices (8 corners)
     const float size = 0.5f;  // Half-size of the cube
     std::vector<vkcommon::Vertex> vertices = {
@@ -92,11 +92,11 @@ void CubeExploder::createVertexBuffer() {
     m_vertexBuffer.createIndexBuffer(indices, m_commandPool);
 }
 
-void CubeExploder::createCommandBuffers() {
+void CubeApp::createCommandBuffers() {
     m_commandBuffers = m_commandPool.allocateBuffers(MAX_FRAMES_IN_FLIGHT);
 }
 
-void CubeExploder::recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex) {
+void CubeApp::recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex) {
     // Begin command buffer recording
     m_commandPool.beginCommandBuffer(commandBuffer, 0);
 
@@ -141,7 +141,7 @@ void CubeExploder::recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t i
     m_commandPool.endCommandBuffer(commandBuffer);
 }
 
-void CubeExploder::updateUniformBuffer(uint32_t currentImage)
+void CubeApp::updateUniformBuffer(uint32_t currentImage)
 {
     UniformBufferObject ubo{};
 
@@ -174,7 +174,7 @@ void CubeExploder::updateUniformBuffer(uint32_t currentImage)
     m_uniformBuffer.updateData(currentImage, &ubo, sizeof(ubo));
 }
 
-void CubeExploder::drawFrame() {
+void CubeApp::drawFrame() {
     m_frameManager.waitForFence();
 
     updateUniformBuffer(m_frameManager.currentFrame());
@@ -235,7 +235,7 @@ void CubeExploder::drawFrame() {
     m_frameManager.nextFrame();
 }
 
-void CubeExploder::mainLoop() {
+void CubeApp::mainLoop() {
     while (!m_window.shouldClose()) {
         m_window.pollEvents();
         drawFrame();
