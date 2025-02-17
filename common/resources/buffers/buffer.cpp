@@ -73,7 +73,7 @@ namespace vkcommon {
         VkMemoryRequirements memoryRequirements;
         vkGetBufferMemoryRequirements(m_deviceRef.handle(), m_buffer, &memoryRequirements);
 
-        m_allocatorRef.allocateMemoryForRequirements(memoryRequirements, properties);
+        m_memory = m_allocatorRef.allocateMemoryForRequirements(memoryRequirements, properties);
         m_size = size;
 
         vkBindBufferMemory(m_deviceRef.handle(), m_buffer, m_memory, 0);

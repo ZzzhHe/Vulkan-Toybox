@@ -9,12 +9,12 @@
 
 namespace vkcommon
 {
-    RenderPass::RenderPass(const PhysicalDevice& physicalDevice, const Device& device, const SwapChain& swapChain)
+    RenderPass::RenderPass(const Device& device, const SwapChain& swapChain)
         : m_deviceRef(device), m_swapChainRef(swapChain)
     {
         VkAttachmentDescription colorAttachment{};
         colorAttachment.format = m_swapChainRef.swapChainImageFormat();
-        colorAttachment.samples = physicalDevice.msaaSamples();
+        colorAttachment.samples = m_deviceRef.msaaSamples();
         colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
         colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
         colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
@@ -23,8 +23,8 @@ namespace vkcommon
         colorAttachment.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
         VkAttachmentDescription depthAttachment{};
-        depthAttachment.format = physicalDevice.findDepthFormat();
-        depthAttachment.samples = physicalDevice.msaaSamples();
+        depthAttachment.format = m_deviceRef.findDepthFormat();
+        depthAttachment.samples = m_deviceRef.msaaSamples();
         depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
         depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
         depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
@@ -87,5 +87,25 @@ namespace vkcommon
     RenderPass::~RenderPass()
     {
         vkDestroyRenderPass(m_deviceRef.handle(), m_renderPass, nullptr);
+    }
+
+    void RenderPass::begin(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer,
+        VkExtent2D extent, const std::vector<VkClearValue>& clearValues) const
+    {
+        VkRenderPassBeginInfo renderPassInfo{};
+        renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+        renderPassInfo.renderPass = m_renderPass;
+        renderPassInfo.framebuffer = framebuffer;
+        renderPassInfo.renderArea.offset = { 0, 0 };
+        renderPassInfo.renderArea.extent = extent;
+        renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
+        renderPassInfo.pClearValues = clearValues.data();
+
+        vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+    }
+
+    void RenderPass::end(VkCommandBuffer commandBuffer) const
+    {
+        vkCmdEndRenderPass(commandBuffer);
     }
 }

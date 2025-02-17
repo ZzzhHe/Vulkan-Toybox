@@ -27,10 +27,10 @@ namespace vkcommon
         for (auto device : devices)
         {
             // find the first suitable device
-            if (isDeviceSuitable())
+            if (isDeviceSuitable(device))
             {
                 m_physicalDevice = device;
-                m_indices = findQueueFamilies();
+                m_indices = findQueueFamilies(device);
                 m_msaaSamples = getMaxUsableSampleCount();
                 break;
             }
@@ -42,32 +42,32 @@ namespace vkcommon
         }
     }
 
-    bool PhysicalDevice::isDeviceSuitable()
+    bool PhysicalDevice::isDeviceSuitable(VkPhysicalDevice physicalDevice)
     {
         // check if there is at least one queue family that supports VK_QUEUE_GRAPHICS_BIT (graphics operations)
-        QueueFamilyIndices indices = findQueueFamilies();
+        QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
         // TODO: we can check for other features of the device here, e.g. geometry shader support
-        bool extensionsSupported = checkDeviceExtensionSupport();
+        bool extensionsSupported = checkDeviceExtensionSupport(physicalDevice);
 
         // TODO: check for swap chain support
         bool swapChainAdequate = false;
         if (extensionsSupported)
         {
             VkPhysicalDeviceFeatures supportedFeatures;
-            vkGetPhysicalDeviceFeatures(m_physicalDevice, &supportedFeatures);
+            vkGetPhysicalDeviceFeatures(physicalDevice, &supportedFeatures);
             swapChainAdequate = supportedFeatures.samplerAnisotropy;
         }
 
         return indices.isComplete() && extensionsSupported && swapChainAdequate;
     }
 
-    QueueFamilyIndices PhysicalDevice::findQueueFamilies()
+    QueueFamilyIndices PhysicalDevice::findQueueFamilies(VkPhysicalDevice physicalDevice)
     {
         QueueFamilyIndices indices;
         uint32_t queueFamilyCount = 0;
-        vkGetPhysicalDeviceQueueFamilyProperties(m_physicalDevice, &queueFamilyCount, nullptr);
+        vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, nullptr);
         std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
-        vkGetPhysicalDeviceQueueFamilyProperties(m_physicalDevice, &queueFamilyCount, queueFamilies.data());
+        vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, queueFamilies.data());
         int i = 0;
         for (const auto& queueFamily : queueFamilies)
         {
@@ -79,7 +79,7 @@ namespace vkcommon
 
             // presentation (surface) support
             VkBool32 presentSupport = false;
-            vkGetPhysicalDeviceSurfaceSupportKHR(m_physicalDevice, i, m_surfaceRef.handle(), &presentSupport);
+            vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, i, m_surfaceRef.handle(), &presentSupport);
             if (presentSupport)
             {
                 indices.presentFamily = i;
@@ -94,13 +94,13 @@ namespace vkcommon
         return indices;
     }
 
-    bool PhysicalDevice::checkDeviceExtensionSupport()
+    bool PhysicalDevice::checkDeviceExtensionSupport(VkPhysicalDevice physicalDevice)
     {
         uint32_t extensionCount;
-        vkEnumerateDeviceExtensionProperties(m_physicalDevice, nullptr, &extensionCount, nullptr);
+        vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &extensionCount, nullptr);
 
         std::vector<VkExtensionProperties> availableExtensions(extensionCount);
-        vkEnumerateDeviceExtensionProperties(m_physicalDevice, nullptr, &extensionCount, availableExtensions.data());
+        vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &extensionCount, availableExtensions.data());
 
         std::set<std::string> requiredExtensionsSet(kDeviceExtensions.begin(), kDeviceExtensions.end());
 

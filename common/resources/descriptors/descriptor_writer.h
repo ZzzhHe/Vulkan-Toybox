@@ -1,10 +1,13 @@
-#ifndef DESCRIPTOR_SET_LAYOUT_H
-#define DESCRIPTOR_SET_LAYOUT_H
+#ifndef DESCRIPTOR_WRITER_H
+#define DESCRIPTOR_WRITER_H
 
 #include <vulkan/vulkan.h>
 #include <vector>
 
 namespace vkcommon {
+
+    class Device;
+
     class DescriptorWriter {
     public:
         DescriptorWriter(VkDescriptorSet descriptorSet);
@@ -32,4 +35,4 @@ namespace vkcommon {
 
 } // namespace vkcommon
 
-#endif // DESCRIPTOR_SET_LAYOUT_H
+#endif // DESCRIPTOR_WRITER_H

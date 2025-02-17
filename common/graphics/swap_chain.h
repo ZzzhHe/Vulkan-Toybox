@@ -26,16 +26,21 @@ namespace vkcommon
         SwapChain(const Window& window, const Surface& surface,
             const PhysicalDevice& physicalDevice, const Device& device);
         ~SwapChain();
+
         void createSwapChain();
         void createImageViews();
         void destroySwapChain() const;
 
+        void createFrameBuffers(const VkRenderPass& renderPass, VkImageView colorImageView, VkImageView depthImageView);
+        void destroyFrameBuffers();
+        
         VkSwapchainKHR handle() const { return m_swapChain; }
         std::vector<VkImage> swapChainImages() const { return m_swapChainImages; }
         VkImageView swapChainImageView(int index) const { return m_swapChainImageViews[index]; }
         std::vector<VkImageView> swapChainImageViews() const { return m_swapChainImageViews; }
         VkFormat swapChainImageFormat() const { return m_swapChainImageFormat; }
         VkExtent2D swapChainExtent() const { return m_swapChainExtent; }
+        VkFramebuffer swapChainFramebuffer(size_t index) const { return m_swapChainFramebuffers[index]; }
 
     private:
         SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device, VkSurfaceKHR surface);
@@ -48,6 +53,7 @@ namespace vkcommon
         VkFormat m_swapChainImageFormat;
         VkExtent2D m_swapChainExtent;
         std::vector<VkImageView> m_swapChainImageViews;
+        std::vector<VkFramebuffer> m_swapChainFramebuffers;
 
         const Window& m_windowRef;
         const Surface& m_surfaceRef;

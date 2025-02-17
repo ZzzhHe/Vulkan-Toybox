@@ -3,6 +3,8 @@
 
 #include <vulkan/vulkan.h>
 
+#include <vector>
+
 namespace vkcommon
 {
     class PhysicalDevice;
@@ -12,11 +14,14 @@ namespace vkcommon
     class RenderPass
     {
     public:
-        RenderPass(const PhysicalDevice& physicalDevice, const Device& device, const SwapChain& swapChain);
+        RenderPass(const Device& device, const SwapChain& swapChain);
         ~RenderPass();
 
         RenderPass(const RenderPass&) = delete;
         RenderPass& operator=(const RenderPass&) = delete;
+
+        void begin(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer, VkExtent2D extent, const std::vector<VkClearValue>& clearValues) const;
+        void end(VkCommandBuffer commandBuffer) const;
 
         operator VkRenderPass() const noexcept { return m_renderPass; }
 

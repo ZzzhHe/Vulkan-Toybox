@@ -33,7 +33,7 @@ namespace vkcommon
     {
     public:
         PhysicalDevice(const Instance& instance, const Surface& surface);
-        ~PhysicalDevice();
+        ~PhysicalDevice() = default;
 
         PhysicalDevice(const PhysicalDevice&) = delete;
         PhysicalDevice& operator=(const PhysicalDevice&) = delete;
@@ -47,9 +47,9 @@ namespace vkcommon
         bool hasStencilComponent(VkFormat format) const;
 
     private:
-        bool checkDeviceExtensionSupport();
-        bool isDeviceSuitable();
-        QueueFamilyIndices findQueueFamilies();
+        bool checkDeviceExtensionSupport(VkPhysicalDevice physicalDevice);
+        bool isDeviceSuitable(VkPhysicalDevice physicalDevice);
+        QueueFamilyIndices findQueueFamilies(VkPhysicalDevice physicalDevice);
         VkSampleCountFlagBits getMaxUsableSampleCount();
 
     private:

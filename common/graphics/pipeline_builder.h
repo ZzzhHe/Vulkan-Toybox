@@ -1,4 +1,6 @@
-#pragma once
+#ifndef PIPELINE_BUILDER_H
+#define PIPELINE_BUILDER_H
+
 #include <vector>
 #include <vulkan/vulkan.h>
 
@@ -10,13 +12,13 @@ namespace vkcommon
     class PipelineBuilder
     {
     public:
-        explicit PipelineBuilder(const PhysicalDevice& physicalDevice, const Device& device);
+        explicit PipelineBuilder(const Device& device);
 
         PipelineBuilder& setVertexInput(const VkVertexInputBindingDescription& binding,
             const std::array<VkVertexInputAttributeDescription, 3>& attributes);
         PipelineBuilder& setShaderStages(const std::vector<VkPipelineShaderStageCreateInfo>& stages);
         PipelineBuilder& setInputAssembly(VkPrimitiveTopology topology);
-        PipelineBuilder& setViewport(const VkExtent2D& extent);
+        PipelineBuilder& setViewport();
         PipelineBuilder& setRasterizer(VkPolygonMode polygonMode = VK_POLYGON_MODE_FILL);
         PipelineBuilder& setMultisampling();
         PipelineBuilder& setDepthStencil();
@@ -28,7 +30,6 @@ namespace vkcommon
 
     private:
         const Device& m_device;
-        const PhysicalDevice& m_physicalDevice;
 
         VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
         std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
@@ -44,3 +45,5 @@ namespace vkcommon
     };
 
 } // namespace vkcommon
+
+#endif // PIPELINE_BUILDER_H

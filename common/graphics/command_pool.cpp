@@ -27,7 +27,7 @@ namespace vkcommon
         vkDestroyCommandPool(m_deviceRef.handle(), m_commandPool, nullptr);
     }
 
-    std::vector<VkCommandBuffer> CommandPool::allocateBuffers(uint32_t count, VkCommandBufferLevel level)
+    std::vector<VkCommandBuffer> CommandPool::allocateBuffers(uint32_t count, VkCommandBufferLevel level) const
     {
         std::vector<VkCommandBuffer> commandBuffers(count);
         VkCommandBufferAllocateInfo allocateInfo{};
@@ -40,41 +40,58 @@ namespace vkcommon
         {
             throw std::runtime_error("Failed to allocate command buffer!");
         }
+
+        return commandBuffers;
     }
 
-    VkCommandBuffer CommandPool::allocateSingleBuffer(VkCommandBufferLevel level = VK_COMMAND_BUFFER_LEVEL_PRIMARY)
+    VkCommandBuffer CommandPool::allocateSingleBuffer(VkCommandBufferLevel level) const
     {
         return allocateBuffers(1, level)[0];
     }
 
-    void CommandPool::freeBuffers(const std::vector<VkCommandBuffer>& buffers)
+    void CommandPool::freeBuffers(const std::vector<VkCommandBuffer>& buffers) const
     {
-        vkFreeCommandBuffers(m_deviceRef.handle(), m_commandPool, buffers.size(), buffers.data());
+        vkFreeCommandBuffers(m_deviceRef.handle(), m_commandPool, static_cast<uint32_t>(buffers.size()), buffers.data());
+    }
+
+    void CommandPool::freeSingleBuffer(VkCommandBuffer buffer) const
+    {
+        vkFreeCommandBuffers(m_deviceRef.handle(), m_commandPool, 1, &buffer);
+    }
+
+    VkCommandBuffer CommandPool::beginCommandBuffer(VkCommandBuffer commandBuffer, VkCommandBufferUsageFlags flags) const
+    {
+        VkCommandBufferBeginInfo beginInfo = {};
+        beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+        beginInfo.flags = flags;
+
+        if (vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS) {
+            throw std::runtime_error("Failed to begin recording command buffer!");
+        }
+
+        return commandBuffer;
+    }
+
+    void CommandPool::endCommandBuffer(VkCommandBuffer commandBuffer) const
+    {
+        if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
+            throw std::runtime_error("Failed to record command buffer!");
+        }
     }
 
     VkCommandBuffer CommandPool::beginSingleTimeCommand() const
     {
-        VkCommandBufferAllocateInfo allocateInfo = {};
-        allocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-        allocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-        allocateInfo.commandPool = m_commandPool;
-        allocateInfo.commandBufferCount = 1;
+        
+        VkCommandBuffer commandBuffer = allocateSingleBuffer(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 
-        VkCommandBuffer commandBuffer;
-        vkAllocateCommandBuffers(m_deviceRef.handle(), &allocateInfo, &commandBuffer);
-
-        VkCommandBufferBeginInfo beginInfo = {};
-        beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-        beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-
-        vkBeginCommandBuffer(commandBuffer, &beginInfo);
+        beginCommandBuffer(commandBuffer, VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
 
         return commandBuffer;
     }
 
     void CommandPool::endSingleTimeCommand(VkCommandBuffer commandBuffer, VkQueue queue) const
     {
-        vkEndCommandBuffer(commandBuffer);
+        endCommandBuffer(commandBuffer);
 
         VkSubmitInfo submitInfo{};
         submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -84,6 +101,6 @@ namespace vkcommon
         vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE);
         vkQueueWaitIdle(queue);
 
-        vkFreeCommandBuffers(m_deviceRef.handle(), m_commandPool, 1, &commandBuffer);
+        freeSingleBuffer(commandBuffer);
     }
 }

@@ -12,10 +12,11 @@ namespace vkcommon {
 
     void UniformBuffer::create(VkDeviceSize bufferSize, uint32_t framesInFlight) {
         m_bufferSize = bufferSize;
-        m_buffers.resize(framesInFlight, Buffer(m_device, m_allocator));
-
-        for (auto& buffer : m_buffers) {
-            buffer.create(
+        m_buffers.clear();
+        m_buffers.reserve(framesInFlight);
+        for (uint32_t i = 0; i < framesInFlight; ++i) {
+            m_buffers.emplace_back(m_device, m_allocator);
+            m_buffers.back().create(
                 bufferSize,
                 VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
                 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT

@@ -1,6 +1,5 @@
 #include "depth_buffer.h"
 
-#include "core/physical_device.h"
 #include "core/device.h"
 #include "graphics/swap_chain.h"
 #include "resources/images/image.h"

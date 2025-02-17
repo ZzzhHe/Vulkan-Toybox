@@ -111,4 +111,15 @@ namespace vkcommon {
         // Copy from staging to index buffer
         m_indexBuffer.copyFrom(m_stagingBuffer, bufferSize, cmdPool);
     }
+
+    // TODO: not sure if this is the best way to bind buffers
+    void VertexBuffer::bindVertexBuffer(VkCommandBuffer commandBuffer, uint32_t firstBinding) {
+        VkBuffer vertexBuffers[] = { m_vertexBuffer.handle() };
+        VkDeviceSize offsets[] = { 0 };
+        vkCmdBindVertexBuffers(commandBuffer, firstBinding, 1, vertexBuffers, offsets);
+    }
+
+    void VertexBuffer::bindIndexBuffer(VkCommandBuffer commandBuffer, VkIndexType indexType) {
+        vkCmdBindIndexBuffer(commandBuffer, m_indexBuffer.handle(), 0, indexType);
+    }
 } // namespace vkcommon

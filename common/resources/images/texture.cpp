@@ -114,10 +114,10 @@ namespace vkcommon {
         m_stagingBuffer.reset();
     }
 
-    void Texture::createSampler(float maxAnisotropy = 16.0f,
-        VkFilter minFilter = VK_FILTER_LINEAR,
-        VkFilter magFilter = VK_FILTER_LINEAR,
-        VkSamplerAddressMode addressMode = VK_SAMPLER_ADDRESS_MODE_REPEAT) {
+    void Texture::createSampler(float maxAnisotropy,
+        VkFilter minFilter,
+        VkFilter magFilter,
+        VkSamplerAddressMode addressMode) {
 
         VkSamplerCreateInfo samplerInfo{};
         samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;

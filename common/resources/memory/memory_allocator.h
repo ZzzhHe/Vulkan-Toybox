@@ -5,7 +5,7 @@
 
 namespace vkcommon {
 
-    class PhyscialDevice;
+    class PhysicalDevice;
     class Device;
 
     class MemoryAllocator {

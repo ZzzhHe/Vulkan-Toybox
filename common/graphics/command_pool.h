@@ -19,9 +19,14 @@ namespace vkcommon
         CommandPool& operator=(const CommandPool&) = delete;
 
         // Command buffer management
-        std::vector<VkCommandBuffer> allocateBuffers(uint32_t count, VkCommandBufferLevel level = VK_COMMAND_BUFFER_LEVEL_PRIMARY);
-        VkCommandBuffer allocateSingleBuffer(VkCommandBufferLevel level = VK_COMMAND_BUFFER_LEVEL_PRIMARY);
-        void freeBuffers(const std::vector<VkCommandBuffer>& buffers);
+        std::vector<VkCommandBuffer> allocateBuffers(uint32_t count, VkCommandBufferLevel level = VK_COMMAND_BUFFER_LEVEL_PRIMARY) const;
+        VkCommandBuffer allocateSingleBuffer(VkCommandBufferLevel level = VK_COMMAND_BUFFER_LEVEL_PRIMARY) const;
+        void freeBuffers(const std::vector<VkCommandBuffer>& buffers) const;
+        void freeSingleBuffer(VkCommandBuffer buffer) const;
+
+        // Begin and end single time command buffer
+        VkCommandBuffer beginCommandBuffer(VkCommandBuffer commandBuffer, VkCommandBufferUsageFlags flags) const;
+        void endCommandBuffer(VkCommandBuffer commandBuffer) const;
 
         // Immediate command execution
         VkCommandBuffer beginSingleTimeCommand() const;

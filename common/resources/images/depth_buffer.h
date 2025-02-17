@@ -3,12 +3,13 @@
 
 #include <vulkan/vulkan_core.h>
 
+#include "resources/images/image.h"
+
 namespace vkcommon
 {
-    class PhysicalDevice;
     class Device;
     class MemoryAllocator;
-    class Image;
+    class SwapChain;
 
     class DepthBuffer
     {
@@ -27,7 +28,7 @@ namespace vkcommon
 
         void create(const SwapChain& swapChain);
 
-        operator VkImageView() const { return m_imageView; }
+        VkImageView imageView() const { return m_imageView; }
         VkFormat format() const { return m_format; }
         VkImage handle() const { return m_image.handle(); }
 
@@ -43,5 +44,7 @@ namespace vkcommon
         const Device& m_deviceRef;
         MemoryAllocator& m_allocatorRef;
     };
-}
+} // namespace vkcommon
+
 #endif // DEPTH_BUFFER_H
+

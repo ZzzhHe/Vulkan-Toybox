@@ -22,12 +22,10 @@ namespace vkcommon
         std::vector<VkPhysicalDevice> enumeratePhysicalDevices() const;
 
     private:
-        void createInstance();
-        void setupDebugMessenger();
-
         // Instance creation helpers
         void createInstance();
         void setupDebugMessenger();
+
         bool checkValidationLayerSupport();
         std::vector<const char*> getRequiredExtensions();
 
@@ -35,10 +33,10 @@ namespace vkcommon
         void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
 
         static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
-            VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-            VkDebugUtilsMessageTypeFlagsEXT messageType,
+            [[maybe_unused]] VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+            [[maybe_unused]] VkDebugUtilsMessageTypeFlagsEXT messageType,
             const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-            void* pUserData);
+            [[maybe_unused]] void* pUserData);
 
         static VkResult createDebugUtilsMessengerEXT(
             VkInstance instance,

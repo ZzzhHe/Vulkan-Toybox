@@ -9,6 +9,8 @@
 
 #include <vulkan/vulkan_core.h>
 
+#include "resources/buffers/buffer.h"
+
 namespace vkcommon
 {
     class Device;
@@ -41,6 +43,9 @@ namespace vkcommon
 
         void createVertexBuffer(const std::vector<Vertex>& vertices, const CommandPool& cmdPool);
         void createIndexBuffer(const std::vector<uint32_t>& indices, const CommandPool& cmdPool);
+
+        void bindVertexBuffer(VkCommandBuffer commandBuffer, uint32_t firstBinding);
+        void bindIndexBuffer(VkCommandBuffer commandBuffer, VkIndexType indexType);
 
         VkBuffer vertexBuffer() const { return m_vertexBuffer.handle(); }
         VkBuffer indexBuffer() const { return m_indexBuffer.handle(); }

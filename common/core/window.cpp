@@ -44,7 +44,7 @@ namespace vkcommon
         }
     }
 
-    void Window::framebufferResizeCallback(GLFWwindow* window, int width, int height)
+    void Window::framebufferResizeCallback(GLFWwindow* window, [[maybe_unused]] int width, [[maybe_unused]] int height)
     {
         auto self = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
         self->m_framebufferResized = true;

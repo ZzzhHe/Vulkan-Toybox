@@ -6,6 +6,7 @@
 #include "core/device.h"
 
 #include <algorithm>
+#include <array>
 
 namespace vkcommon
 {
@@ -19,6 +20,7 @@ namespace vkcommon
 
     SwapChain::~SwapChain()
     {
+        destroyFrameBuffers();
         destroySwapChain();
     }
 
@@ -129,6 +131,38 @@ namespace vkcommon
         vkDestroySwapchainKHR(m_deviceRef.handle(), m_swapChain, nullptr);
     }
 
+    void SwapChain::createFrameBuffers(const VkRenderPass& renderPass, VkImageView colorImageView, VkImageView depthImageView) {
+        m_swapChainFramebuffers.resize(m_swapChainImageViews.size());
+
+        for (size_t i = 0; i < m_swapChainImageViews.size(); i++) {
+            std::array<VkImageView, 3> attachments = {
+                colorImageView,           // Color attachment
+                depthImageView,      // Depth attachment
+                m_swapChainImageViews[i]            // Resolve attachment
+            };
+
+            VkFramebufferCreateInfo framebufferInfo{};
+            framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+            framebufferInfo.renderPass = renderPass;
+            framebufferInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
+            framebufferInfo.pAttachments = attachments.data();
+            framebufferInfo.width = m_swapChainExtent.width;
+            framebufferInfo.height = m_swapChainExtent.height;
+            framebufferInfo.layers = 1;
+
+            if (vkCreateFramebuffer(m_deviceRef.handle(), &framebufferInfo, nullptr, &m_swapChainFramebuffers[i]) != VK_SUCCESS) {
+                throw std::runtime_error("Failed to create framebuffer!");
+            }
+        }
+    }
+
+    void SwapChain::destroyFrameBuffers() {
+        for (auto framebuffer : m_swapChainFramebuffers) {
+            vkDestroyFramebuffer(m_deviceRef.handle(), framebuffer, nullptr);
+        }
+        m_swapChainFramebuffers.clear();
+    }
+
     SwapChainSupportDetails SwapChain::querySwapChainSupport(VkPhysicalDevice device, VkSurfaceKHR surface)
     {
         SwapChainSupportDetails details;
@@ -149,7 +183,7 @@ namespace vkcommon
 
         if (presentModeCount != 0)
         {
-            details.presentModes.resize(formatCount);
+            details.presentModes.resize(presentModeCount);
             vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, details.presentModes.data());
         }
 

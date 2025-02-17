@@ -1,18 +1,15 @@
 #include "pipeline_builder.h"
 
-#include "core/physical_device.h"
 #include "core/device.h"
 #include "graphics/render_pass.h"
 
-
 #include <array>
-
 #include <stdexcept>
 
 namespace vkcommon
 {
 
-    PipelineBuilder::PipelineBuilder(const PhysicalDevice& physicalDevice, const Device& device) : m_physicalDevice(physicalDevice), m_device(device)
+    PipelineBuilder::PipelineBuilder(const Device& device) : m_device(device)
     {
         // Default initialization
         inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
@@ -49,25 +46,15 @@ namespace vkcommon
         return *this;
     }
 
-    PipelineBuilder& PipelineBuilder::setViewport(const VkExtent2D& extent)
+    PipelineBuilder& PipelineBuilder::setViewport()
     {
-        VkViewport viewport{};
-        viewport.x = 0.0f;
-        viewport.y = 0.0f;
-        viewport.width = static_cast<float>(extent.width);
-        viewport.height = static_cast<float>(extent.height);
-        viewport.minDepth = 0.0f;
-        viewport.maxDepth = 1.0f;
-
-        VkRect2D scissor{};
-        scissor.offset = { 0, 0 };
-        scissor.extent = extent;
-
+        viewportState = {};
         viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
         viewportState.viewportCount = 1;
-        viewportState.pViewports = &viewport;
         viewportState.scissorCount = 1;
-        viewportState.pScissors = &scissor;
+        // Set to nullptr to use dynamic states
+        viewportState.pScissors = nullptr;
+        viewportState.pViewports = nullptr;
         return *this;
     }
 
@@ -76,7 +63,7 @@ namespace vkcommon
         rasterizer.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
         rasterizer.depthClampEnable = VK_FALSE; // may be used for shadow mapping when VK_TRUE
         rasterizer.rasterizerDiscardEnable = VK_FALSE;
-        rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
+        rasterizer.polygonMode = polygonMode;
         rasterizer.lineWidth = 1.0f;
         rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
         rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
@@ -92,7 +79,7 @@ namespace vkcommon
     {
         multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
         multisampling.sampleShadingEnable = VK_TRUE;
-        multisampling.rasterizationSamples = m_physicalDevice.msaaSamples();
+        multisampling.rasterizationSamples = m_device.msaaSamples();
         // Optional
         multisampling.minSampleShading = .2f;
         multisampling.pSampleMask = nullptr;

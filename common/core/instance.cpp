@@ -47,7 +47,7 @@ namespace vkcommon
         createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
         createInfo.ppEnabledExtensionNames = extensions.data();
 
-        createInfo.flags |= VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
+        //createInfo.flags |= VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
 
         VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
         if (m_hasValidationLayers)
@@ -72,7 +72,7 @@ namespace vkcommon
         std::vector<const char*> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
 
         // MacOS support
-        extensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
+        //extensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
         extensions.push_back(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
 
         if (m_hasValidationLayers)
@@ -108,7 +108,7 @@ namespace vkcommon
                 return false;
             }
         }
-        return false;
+        return true;
     }
 
     void Instance::setupDebugMessenger()
@@ -140,12 +140,10 @@ namespace vkcommon
     }
 
     VKAPI_ATTR VkBool32 VKAPI_CALL Instance::debugCallback(
-        VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-        VkDebugUtilsMessageTypeFlagsEXT messageType,
+        [[maybe_unused]] VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+        [[maybe_unused]] VkDebugUtilsMessageTypeFlagsEXT messageType,
         const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-        void* pUserData)
-    {
-
+        [[maybe_unused]] void* pUserData) {
         std::cerr << "Validation layer: " << pCallbackData->pMessage << std::endl;
         return VK_FALSE;
     }

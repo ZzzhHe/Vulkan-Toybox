@@ -4,13 +4,13 @@
 #include <vulkan/vulkan_core.h>
 
 #include <memory>
+#include <string>
 
 #include "resources/images/image.h"
 #include "resources/buffers/buffer.h"
 
 namespace vkcommon {
 
-    class PhysicalDevice;
     class Device;
     class CommandPool;
     class MemoryAllocator;
@@ -59,4 +59,4 @@ namespace vkcommon {
 
 } // namespace vkcommon
 
-#endif //TEXTURE_H
+#endif // TEXTURE_H

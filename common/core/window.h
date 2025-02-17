@@ -40,7 +40,7 @@ namespace vkcommon
         float lastFrame = 0.0f;
 
     private:
-        static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
+        static void framebufferResizeCallback(GLFWwindow* window, [[maybe_unused]] int width, [[maybe_unused]] int height);
         void updateDeltaTime();
 
         GLFWwindow* m_window;
