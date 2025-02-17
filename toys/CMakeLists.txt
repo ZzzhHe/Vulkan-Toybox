@@ -8,3 +8,4 @@ function(add_vulkan_toy name)
 endfunction()
 
 add_subdirectory(triangle)
+add_subdirectory(exploder)
