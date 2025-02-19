@@ -56,7 +56,6 @@ namespace vkcommon
 
         Buffer m_vertexBuffer;
         Buffer m_indexBuffer;
-        Buffer m_stagingBuffer;
     };
 } // namespace vkcommon
 

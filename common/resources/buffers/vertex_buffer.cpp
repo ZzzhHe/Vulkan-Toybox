@@ -39,8 +39,7 @@ namespace vkcommon {
         : m_device(device)
         , m_allocator(allocator)
         , m_vertexBuffer(device, allocator)
-        , m_indexBuffer(device, allocator)
-        , m_stagingBuffer(device, allocator) {
+        , m_indexBuffer(device, allocator) {
     }
 
     VertexBuffer::~VertexBuffer() = default;
@@ -49,15 +48,13 @@ namespace vkcommon {
         : m_device(other.m_device)
         , m_allocator(other.m_allocator)
         , m_vertexBuffer(std::move(other.m_vertexBuffer))
-        , m_indexBuffer(std::move(other.m_indexBuffer))
-        , m_stagingBuffer(std::move(other.m_stagingBuffer)) {
+        , m_indexBuffer(std::move(other.m_indexBuffer)) {
     }
 
     VertexBuffer& VertexBuffer::operator=(VertexBuffer&& other) noexcept {
         if (this != &other) {
             m_vertexBuffer = std::move(other.m_vertexBuffer);
             m_indexBuffer = std::move(other.m_indexBuffer);
-            m_stagingBuffer = std::move(other.m_stagingBuffer);
         }
         return *this;
     }
@@ -65,16 +62,17 @@ namespace vkcommon {
     void VertexBuffer::createVertexBuffer(const std::vector<Vertex>& vertices,
         const CommandPool& cmdPool) {
         VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
-
+        
+        Buffer stagingBuffer(m_device, m_allocator);
         // Create staging buffer
-        m_stagingBuffer.create(
+        stagingBuffer.create(
             bufferSize,
             VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
             VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
         );
 
         // Copy vertex data to staging buffer
-        m_stagingBuffer.update(vertices.data(), bufferSize);
+        stagingBuffer.update(vertices.data(), bufferSize);
 
         // Create vertex buffer
         m_vertexBuffer.create(
@@ -84,22 +82,24 @@ namespace vkcommon {
         );
 
         // Copy from staging to vertex buffer
-        m_vertexBuffer.copyFrom(m_stagingBuffer, bufferSize, cmdPool);
+        m_vertexBuffer.copyFrom(stagingBuffer, bufferSize, cmdPool);
     }
 
     void VertexBuffer::createIndexBuffer(const std::vector<uint32_t>& indices,
         const CommandPool& cmdPool) {
         VkDeviceSize bufferSize = sizeof(indices[0]) * indices.size();
+        
+        Buffer stagingBuffer(m_device, m_allocator);
 
         // Create staging buffer
-        m_stagingBuffer.create(
+        stagingBuffer.create(
             bufferSize,
             VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
             VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
         );
 
         // Copy index data to staging buffer
-        m_stagingBuffer.update(indices.data(), bufferSize);
+        stagingBuffer.update(indices.data(), bufferSize);
 
         // Create index buffer
         m_indexBuffer.create(
@@ -109,7 +109,7 @@ namespace vkcommon {
         );
 
         // Copy from staging to index buffer
-        m_indexBuffer.copyFrom(m_stagingBuffer, bufferSize, cmdPool);
+        m_indexBuffer.copyFrom(stagingBuffer, bufferSize, cmdPool);
     }
 
     // TODO: not sure if this is the best way to bind buffers
