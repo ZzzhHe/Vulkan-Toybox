@@ -200,7 +200,7 @@ void Explosion::updateUniformBuffer(uint32_t currentImage)
         glm::radians(45.0f),                                    // 45 degree FOV
         static_cast<float>(m_swapChain.swapChainExtent().width) /
         static_cast<float>(m_swapChain.swapChainExtent().height), // Aspect ratio
-        1.0f,                                                   // Near plane
+        2.0f,                                                   // Near plane
         10.0f                                                   // Far plane
     );
 
