@@ -45,4 +45,4 @@ endfunction()
 
 add_subdirectory(triangle)
 add_subdirectory(cube)
-# add_subdirectory(explosion)
+add_subdirectory(explosion)
