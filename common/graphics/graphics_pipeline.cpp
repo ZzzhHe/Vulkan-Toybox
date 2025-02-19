@@ -17,12 +17,29 @@ namespace vkcommon
         const SwapChain& swapChain,
         const VkDescriptorSetLayout& descriptorLayout,
         const std::filesystem::path& vertPath,
-        const std::filesystem::path& fragPath)
+        const std::filesystem::path& fragPath,
+        const std::filesystem::path& geomPath)
         : m_deviceRef(device), m_swapChainRef(swapChain), m_renderPass(device, swapChain)
     {
         // Create shader modules
-        ShaderModule vertShader(m_deviceRef, vertPath);
-        ShaderModule fragShader(m_deviceRef, fragPath);
+        std::vector<ShaderModule> shaderModules;
+        shaderModules.reserve(3); // 0 : Vertex, 1 : Fragment, and 2 : Geometry shaders
+
+        shaderModules.emplace_back(device, vertPath);
+        shaderModules.emplace_back(device, fragPath);
+
+        std::vector<VkPipelineShaderStageCreateInfo> shaderStages = {
+            {VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO, nullptr, 0, VK_SHADER_STAGE_VERTEX_BIT, shaderModules[0], "main"},
+            {VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO, nullptr, 0, VK_SHADER_STAGE_FRAGMENT_BIT, shaderModules[1], "main"}
+        };
+
+        if (!geomPath.empty())
+        {
+            shaderModules.emplace_back(device, geomPath);
+            shaderStages.push_back(
+                { VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO, nullptr, 0, VK_SHADER_STAGE_GEOMETRY_BIT, shaderModules[2], "main"}
+            );
+        }
 
         // Create pipeline layout
         createPipelineLayout(descriptorLayout);
@@ -30,10 +47,7 @@ namespace vkcommon
         // Set up pipeline builder
         PipelineBuilder builder(device);
         builder
-            .setShaderStages({ {VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO, nullptr, 0,
-                               VK_SHADER_STAGE_VERTEX_BIT, vertShader, "main"},
-                              {VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO, nullptr, 0,
-                               VK_SHADER_STAGE_FRAGMENT_BIT, fragShader, "main"} })
+            .setShaderStages(shaderStages)
             .setVertexInput(Vertex::getBindingDescription(), Vertex::getAttributeDescriptions())
             .setInputAssembly(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST)
             .setViewport()

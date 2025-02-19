@@ -25,7 +25,34 @@ namespace vkcommon
 
     ShaderModule::~ShaderModule()
     {
-        vkDestroyShaderModule(m_deviceRef.handle(), m_module, nullptr);
+        destroy();
+    }
+
+    void ShaderModule::destroy() noexcept
+    {
+        if (m_module != VK_NULL_HANDLE)
+        {
+            vkDestroyShaderModule(m_deviceRef.handle(), m_module, nullptr);
+            m_module = VK_NULL_HANDLE;
+        }
+    }
+
+    ShaderModule::ShaderModule(ShaderModule&& other) noexcept
+        : m_deviceRef(other.m_deviceRef),
+        m_module(other.m_module)
+    {   
+        other.m_module = VK_NULL_HANDLE;
+    }
+
+    ShaderModule& ShaderModule::operator=(ShaderModule&& other) noexcept
+    {
+        if (this != &other)
+        {
+            destroy();
+            m_module = other.m_module;
+            other.m_module = VK_NULL_HANDLE;
+        }
+        return *this;
     }
 
     std::vector<char> ShaderModule::readFile(const std::filesystem::path& path) const
