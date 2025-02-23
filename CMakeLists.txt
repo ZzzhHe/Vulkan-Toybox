@@ -10,6 +10,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Vulkan REQUIRED COMPONENTS glslangValidator)
 find_package(glfw3 CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED) 
+find_package(assimp CONFIG REQUIRED)
 
 # 3rd party headers (STB, etc)
 add_library(3rd_party INTERFACE)

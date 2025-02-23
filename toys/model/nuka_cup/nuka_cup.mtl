@@ -1,0 +1,14 @@
+# Material Count: 1
+
+newmtl Nuka_Cup
+Ns 32.000000
+Ka 0.100000 0.100000 0.100000
+Kd 0.800000 0.800000 0.800000
+Ks 0.300000 0.300000 0.300000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd albedo.png
+map_Ks specular.png
+map_Kn normal.png
