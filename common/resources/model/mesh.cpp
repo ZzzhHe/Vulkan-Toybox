@@ -47,7 +47,7 @@ namespace vkcommon {
             commandBuffer,
             VK_PIPELINE_BIND_POINT_GRAPHICS,
             pipelineLayout,
-            1,  // Material Descriptors : 2
+            1,  // Material Descriptors : 1
             1,  // One set
             &m_material->m_descriptorSets[currentFrame],
             0,

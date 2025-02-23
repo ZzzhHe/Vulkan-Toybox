@@ -51,7 +51,7 @@ namespace vkcommon {
         for (const auto& mesh : m_meshes) {
             if (mesh->m_material) {
                 mesh->m_material->createPropertiesUBO(framesInFlight);
-                mesh->m_material->initDescriptorSets(pool, materialLayout, framesInFlight);
+                mesh->m_material->createDescriptorSets(pool, materialLayout, framesInFlight);
             }
         }
     }

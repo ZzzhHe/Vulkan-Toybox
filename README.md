@@ -28,9 +28,10 @@ vulkan-toybox/
 
 | Name | Description | Preview |
 |------|-------------|----------|
-| Triangle | Basic triangle rendering demonstrating vertex buffers and graphics pipeline | ![Triangle Demo](.github/images/toys/triangle-demo.png) |
-| 3D Cube | Basic 3D cube rendering demonstrating 3d graphics pipeline and uniform buffer | ![Cube Demo](.github/images/toys/cube-demo.png) |
+| Model Loading | Basic model loading demonstrating the second descriptor set layout and assimp integrate | ![Model Demo](.github/images/toys/model-demo.png) |
 | Explosion | Basic explosion animation demonstrating geometry shader | ![Cube Demo](.github/images/toys/explosion-demo.gif) |
+| 3D Cube | Basic 3D cube rendering demonstrating 3d graphics pipeline and uniform buffer | ![Cube Demo](.github/images/toys/cube-demo.png) |
+| Triangle | Basic triangle rendering demonstrating vertex buffers and graphics pipeline | ![Triangle Demo](.github/images/toys/triangle-demo.png) |
 
 ## Building
 

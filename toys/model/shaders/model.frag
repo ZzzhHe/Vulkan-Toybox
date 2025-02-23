@@ -22,7 +22,7 @@ layout(location = 0) out vec4 outColor;
 
 void main() {
     vec3 lightDir = normalize(vec3(1.0, 1.0, 1.0));
-    vec3 viewDir = normalize(vec3(2.0, 2.0, 2.0) - fragPos);
+    vec3 viewDir = normalize(vec3(1.0, 1.0, -1.0) - fragPos);
 
     vec4 diffuseTexColor = texture(diffuseMap, fragTexCoord);
     vec4 specularTexColor = texture(specularMap, fragTexCoord);

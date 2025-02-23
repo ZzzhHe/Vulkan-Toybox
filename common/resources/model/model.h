@@ -51,7 +51,6 @@ namespace vkcommon {
             uint32_t currentFrame,
             VkPipelineLayout pipelineLayout);
 
-        // Getters for model properties
         const std::vector<std::shared_ptr<Mesh>>& getMeshes() const { return m_meshes; }
         bool isLoaded() const { return !m_meshes.empty(); }
 

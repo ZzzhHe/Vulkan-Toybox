@@ -3,14 +3,11 @@
 void ModelApp::run() {
     initVulkan();
     mainLoop();
-    vkcommon::Material::destroyDescriptorLayout();
 }
 
 void ModelApp::initVulkan() {
-    // TODO: check the static material related
     createDescriptorSetLayout();
     createDescriptorPool();
-    createGlobalDescriptorSets();
 
     // Load model
     m_model = std::make_unique<vkcommon::Model>(m_device, m_allocator);
@@ -20,11 +17,15 @@ void ModelApp::initVulkan() {
         m_commandPool
     );
 
-    createModelDescriptorSets();
+    createGlobalDescriptorSets();
+    m_model->createDescriptor(
+        m_descriptorPool,
+        *vkcommon::Material::getDescriptorSetLayout(),
+        MAX_FRAMES_IN_FLIGHT);
 
     std::vector<VkDescriptorSetLayout> layouts = {
         m_globalDescriptorSetLayout.handle(),           // set = 0
-        vkcommon::Material::getDescriptorLayout()->handle()       // set = 1
+        vkcommon::Material::getDescriptorSetLayout()->handle()       // set = 1
     };
     
     // Create graphics pipeline
@@ -72,6 +73,7 @@ void ModelApp::recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t image
     m_pipeline->bind(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS);
     m_pipeline->setViewportState(commandBuffer, m_swapChain.swapChainExtent());
 
+    // Bind global descriptor set
     vkCmdBindDescriptorSets(
         commandBuffer,
         VK_PIPELINE_BIND_POINT_GRAPHICS,
@@ -82,7 +84,7 @@ void ModelApp::recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t image
         0,
         nullptr
     );
-
+    // model descriptor set has been handled fo each mesh in model class (mesh->draw())
     m_model->draw(commandBuffer, m_frameManager.currentFrame(), m_pipeline->layout());
 
     // End render pass
@@ -192,7 +194,9 @@ void ModelApp::mainLoop() {
         m_window.pollEvents();
         drawFrame();
     }
-
+    
+    // destroy the static material descriptor layout
+    vkcommon::Material::destroyDescriptorSetLayout();
     vkDeviceWaitIdle(m_device.handle());
 }
 
@@ -201,7 +205,7 @@ void ModelApp::createDescriptorSetLayout()
     m_globalDescriptorSetLayout.addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT);
     m_globalDescriptorSetLayout.create();
 
-    vkcommon::Material::createDescriptorLayout(m_device);
+    vkcommon::Material::createDescriptorSetLayout(m_device);
 
 }
 
@@ -243,9 +247,5 @@ void ModelApp::createGlobalDescriptorSets()
 
 void ModelApp::createModelDescriptorSets()
 {
-    m_model->createDescriptor(
-        m_descriptorPool, 
-        *vkcommon::Material::getDescriptorLayout(), 
-        MAX_FRAMES_IN_FLIGHT);
 
 }

@@ -16,7 +16,6 @@ namespace vkcommon {
     class DescriptorPool;
     class DescriptorSetLayout;
 
-
     struct MaterialProperties {
         alignas(16) glm::vec4 ambientColor;
         alignas(16) glm::vec4 diffuseColor;
@@ -37,22 +36,21 @@ namespace vkcommon {
         Material(Material&& other) = default;
         Material& operator=(Material&& other) = default;
 
-        // Descriptor management
-        static void createDescriptorLayout(const Device& device);
-        static void destroyDescriptorLayout();
-        static std::unique_ptr<DescriptorSetLayout>& getDescriptorLayout() { return s_descriptorSetLayout; }
-        
-        void initDescriptorSets(DescriptorPool& pool, const DescriptorSetLayout& layout, uint32_t framesInFlight);
+        // static descriptor set layout management
+        static void createDescriptorSetLayout(const Device& device);
+        static void destroyDescriptorSetLayout();
+        static std::unique_ptr<DescriptorSetLayout>& getDescriptorSetLayout() { return s_descriptorSetLayout; }
+
+        void createDescriptorSets(DescriptorPool& pool, const DescriptorSetLayout& layout, uint32_t framesInFlight);
 
         void createPropertiesUBO(const int MAX_FRAMES_IN_FLIGHT);
-
         void updateProperties(uint32_t currentImage);
-        //void updateTextures(uint32_t currentFrame);
 
         friend class Model;
-        friend class Mesh;  
+        friend class Mesh;
 
     private:
+        // set it as static to be shared among all materials
         static std::unique_ptr<DescriptorSetLayout> s_descriptorSetLayout;
         std::vector<VkDescriptorSet> m_descriptorSets;
 
@@ -64,7 +62,7 @@ namespace vkcommon {
         std::shared_ptr<Texture> m_normalMap{ nullptr };
 
         const Device& m_deviceRef;
-    };  
+    };
 
 } // namespace vkcommon
 

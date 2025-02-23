@@ -19,11 +19,13 @@ namespace vkcommon {
         m_ubo = std::make_unique<UniformBuffer>(m_deviceRef, allocator);
     }
 
-    void Material::createDescriptorLayout(const Device& device) {
+    void Material::createDescriptorSetLayout(const Device& device) {
 
         auto layout = std::make_unique<DescriptorSetLayout>(device);
-
+        
+        // Material's properties 
         layout->addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT);
+        // Material's textures
         layout->addBinding(1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
             VK_SHADER_STAGE_FRAGMENT_BIT); // Diffuse
         layout->addBinding(2, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
@@ -32,16 +34,17 @@ namespace vkcommon {
             VK_SHADER_STAGE_FRAGMENT_BIT); // Normal
 
         layout->create();
-
+        
+        // set the static layout by moving the created layout
         s_descriptorSetLayout = std::move(layout);
     }
 
-    void Material::destroyDescriptorLayout()
+    void Material::destroyDescriptorSetLayout()
     {
         s_descriptorSetLayout.reset();
     }
 
-    void Material::initDescriptorSets(DescriptorPool& pool, const DescriptorSetLayout& layout, uint32_t framesInFlight)
+    void Material::createDescriptorSets(DescriptorPool& pool, const DescriptorSetLayout& layout, uint32_t framesInFlight)
     {
         m_descriptorSets = pool.allocate(layout.handle(), framesInFlight);
 

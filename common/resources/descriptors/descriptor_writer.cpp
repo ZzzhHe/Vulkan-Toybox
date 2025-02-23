@@ -60,6 +60,7 @@ namespace vkcommon {
     }
 
     void DescriptorWriter::update(const Device& device) {
+        // Update buffer and image info pointers
         size_t bufferIndex = 0;
         size_t imageIndex = 0;
         for (auto& write : m_writes) {
