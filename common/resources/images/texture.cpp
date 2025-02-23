@@ -59,9 +59,9 @@ namespace vkcommon {
         return *this;
     }
 
-    void Texture::loadFromFile(const std::string& filepath, const CommandPool& commandPool) {
+    void Texture::loadFromFile(const std::filesystem::path& filepath, const CommandPool& commandPool) {
         int texWidth, texHeight, texChannels;
-        stbi_uc* pixels = stbi_load(filepath.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+        stbi_uc* pixels = stbi_load(filepath.string().c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
 
         if (!pixels) {
             throw std::runtime_error("failed to load texture image!");

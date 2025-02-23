@@ -5,6 +5,7 @@
 
 #include <memory>
 #include <string>
+#include <filesystem>
 
 #include "resources/images/image.h"
 #include "resources/buffers/buffer.h"
@@ -29,7 +30,7 @@ namespace vkcommon {
         Texture& operator=(Texture&& other) noexcept;
 
         // Load texture from file
-        void loadFromFile(const std::string& filepath, const CommandPool& commandPool);
+        void loadFromFile(const std::filesystem::path& filepath, const CommandPool& commandPool);
 
         void createSampler(float maxAnisotropy = 16.0f,
             VkFilter minFilter = VK_FILTER_LINEAR,

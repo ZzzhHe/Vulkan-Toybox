@@ -27,6 +27,7 @@ target_link_libraries(vulkan_common PUBLIC
     Vulkan::Vulkan
     glfw
     glm::glm
+    assimp::assimp
     3rd_party  # This now correctly includes stb_image.h
 )
 
