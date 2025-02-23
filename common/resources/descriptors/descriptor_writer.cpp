@@ -65,11 +65,11 @@ namespace vkcommon {
         for (auto& write : m_writes) {
             if (write.descriptorType == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER ||
                 write.descriptorType == VK_DESCRIPTOR_TYPE_STORAGE_BUFFER) {
-                write.pBufferInfo = &m_bufferInfos[bufferIndex];
+                write.pBufferInfo = &m_bufferInfos[bufferIndex++];
             }
             else if (write.descriptorType == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER ||
                 write.descriptorType == VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE) {
-                write.pImageInfo = &m_imageInfos[imageIndex];
+                write.pImageInfo = &m_imageInfos[imageIndex++];
             }
         }
 
