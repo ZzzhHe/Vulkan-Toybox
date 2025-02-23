@@ -27,7 +27,7 @@ namespace vkcommon {
         write.dstArrayElement = 0;
         write.descriptorType = type;
         write.descriptorCount = 1;
-        write.pBufferInfo = &m_bufferInfos.back();
+        write.pBufferInfo = nullptr; // Will be set later in update() function
         m_writes.push_back(write);
 
         return *this;
@@ -53,13 +53,26 @@ namespace vkcommon {
         write.dstArrayElement = 0;
         write.descriptorType = type;
         write.descriptorCount = 1;
-        write.pImageInfo = &m_imageInfos.back();
+        write.pImageInfo = nullptr; // Will be set later in update() function
         m_writes.push_back(write);
 
         return *this;
     }
 
     void DescriptorWriter::update(const Device& device) {
+        size_t bufferIndex = 0;
+        size_t imageIndex = 0;
+        for (auto& write : m_writes) {
+            if (write.descriptorType == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER ||
+                write.descriptorType == VK_DESCRIPTOR_TYPE_STORAGE_BUFFER) {
+                write.pBufferInfo = &m_bufferInfos[bufferIndex];
+            }
+            else if (write.descriptorType == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER ||
+                write.descriptorType == VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE) {
+                write.pImageInfo = &m_imageInfos[imageIndex];
+            }
+        }
+
         vkUpdateDescriptorSets(
             device.handle(),
             static_cast<uint32_t>(m_writes.size()),
