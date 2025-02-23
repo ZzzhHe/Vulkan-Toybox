@@ -15,7 +15,7 @@ namespace vkcommon
     GraphicsPipeline::GraphicsPipeline(
         const Device& device,
         const SwapChain& swapChain,
-        const VkDescriptorSetLayout& descriptorLayout,
+        const std::vector<VkDescriptorSetLayout>& descriptorLayout,
         const std::filesystem::path& vertPath,
         const std::filesystem::path& fragPath,
         const std::filesystem::path& geomPath)
@@ -68,12 +68,12 @@ namespace vkcommon
         vkDestroyPipelineLayout(m_deviceRef.handle(), m_pipelineLayout, nullptr);
     }
 
-    void GraphicsPipeline::createPipelineLayout(const VkDescriptorSetLayout& descriptorLayout)
+    void GraphicsPipeline::createPipelineLayout(const std::vector<VkDescriptorSetLayout>& descriptorLayout)
     {
         VkPipelineLayoutCreateInfo layoutInfo{};
         layoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-        layoutInfo.setLayoutCount = 1;
-        layoutInfo.pSetLayouts = &descriptorLayout;
+        layoutInfo.setLayoutCount = static_cast<uint32_t>(descriptorLayout.size());
+        layoutInfo.pSetLayouts = descriptorLayout.data();
 
         if (vkCreatePipelineLayout(m_deviceRef.handle(), &layoutInfo, nullptr, &m_pipelineLayout) != VK_SUCCESS)
         {

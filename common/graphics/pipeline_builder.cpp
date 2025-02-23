@@ -21,7 +21,7 @@ namespace vkcommon
 
     PipelineBuilder& PipelineBuilder::setVertexInput(
         const VkVertexInputBindingDescription& binding,
-        const std::array<VkVertexInputAttributeDescription, 3>& attributes)
+        const std::array<VkVertexInputAttributeDescription, 5>& attributes)
     {
         vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
         vertexInputInfo.vertexBindingDescriptionCount = 1;

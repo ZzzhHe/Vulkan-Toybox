@@ -15,7 +15,7 @@ namespace vkcommon
         explicit PipelineBuilder(const Device& device);
 
         PipelineBuilder& setVertexInput(const VkVertexInputBindingDescription& binding,
-            const std::array<VkVertexInputAttributeDescription, 3>& attributes);
+            const std::array<VkVertexInputAttributeDescription, 5>& attributes);
         PipelineBuilder& setShaderStages(const std::vector<VkPipelineShaderStageCreateInfo>& stages);
         PipelineBuilder& setInputAssembly(VkPrimitiveTopology topology);
         PipelineBuilder& setViewport();

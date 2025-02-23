@@ -22,7 +22,7 @@ namespace vkcommon
         GraphicsPipeline(
             const Device& device,
             const SwapChain& swapChain,
-            const VkDescriptorSetLayout& descriptorLayout,
+            const std::vector<VkDescriptorSetLayout>& descriptorLayout,
             const std::filesystem::path& vertPath,
             const std::filesystem::path& fragPath,
             const std::filesystem::path& geomPath = std::filesystem::path()
@@ -39,10 +39,10 @@ namespace vkcommon
         const RenderPass& renderPass() const { return m_renderPass; }
 
     private:
-        void createPipelineLayout(const VkDescriptorSetLayout& descriptorLayout);
+        void createPipelineLayout(const std::vector<VkDescriptorSetLayout>& descriptorLayout);
 
         const std::vector<VkDynamicState> m_dynamicState = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR };
-
+        
         RenderPass m_renderPass;
 
         VkPipelineLayout m_pipelineLayout;
